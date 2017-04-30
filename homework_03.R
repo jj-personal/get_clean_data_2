@@ -55,7 +55,7 @@ fac.subject.act <- paste("Sub", x.merge.extract$subject, x.merge.extract$act_lab
 x.agg <- aggregate(x.merge.extract[,-c(1,2)], by=list(fac.subject.act), FUN="mean")
 colnames(x.agg)[1] <- "subject_act"
 
-write.table(x.agg, "./aggregate_tidy.txt", sep = "\t")
+write.table(x.agg, "./aggregate_tidy.txt", sep = "\t", row.names = FALSE)
 
 
 ## end ###
