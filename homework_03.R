@@ -53,6 +53,10 @@ fac.subject.act <- paste("Sub", x.merge.extract$subject, x.merge.extract$act_lab
 ## Step 5 ##
 ## Aggregate (mean) data by subject and activity
 x.agg <- aggregate(x.merge.extract[,-c(1,2)], by=list(fac.subject.act), FUN="mean")
+colnames(x.agg)[1] <- "subject_act"
+
+write.table(x.agg, "./aggregate_tidy.txt", sep = "\t")
+
 
 ## end ###
 
