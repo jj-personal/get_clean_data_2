@@ -3,6 +3,8 @@
 ## Getting and Cleaning Data
 ###########################################
 
+library(plyr)
+
 ## Read and merge x train and test data
 x.train <- read.table("./UCI HAR Dataset/train/X_train.txt")
 x.test <- read.table("./UCI HAR Dataset/test/X_test.txt")
@@ -10,7 +12,7 @@ x.merge <- rbind(x.train, x.test)
 
 ## Extract features with "mean" & "std"
 feature.name <- read.table("./UCI HAR Dataset/features.txt")
-meanstd.grepl <- grepl("mean", feature.name[,2]) | grepl("std",feature.name[,2])
+meanstd.grepl <- grepl("mean", feature.name[,2], ignore.case = TRUE)|grepl("std",feature.name[,2], ignore.case = TRUE)
 x.merge.extract <- x.merge[,meanstd.grepl]
 
 ## Add column names to x.merge.extract
@@ -31,7 +33,7 @@ act.label <- read.table("./UCI HAR Dataset/activity_labels.txt")
 colnames(act.label) <- c("act_num", "act_label")
 
 ## Merge y with activity lables
-y.merge.label <- merge(y.merge, act.label, by.x = "act_num", by.y = "act_num" )
+y.merge.label <- join(y.merge, act.label)
 
 ## Add a column with activity labels to x.merge.extract
 x.merge.extract$act_label <- y.merge.label$act_label
@@ -52,10 +54,11 @@ fac.subject.act <- paste("Sub", x.merge.extract$subject, x.merge.extract$act_lab
 
 ## Step 5 ##
 ## Aggregate (mean) data by subject and activity
-x.agg <- aggregate(x.merge.extract[,-c(1,2)], by=list(fac.subject.act), FUN="mean")
-colnames(x.agg)[1] <- "subject_act"
+x.agg.1 <- aggregate(. ~ subject + act_label, 
+                     data=x.merge.extract, FUN="mean", na.rm = TRUE)
+#colnames(x.agg)[1] <- "subject_act"
 
-write.table(x.agg, "./aggregate_tidy.txt", sep = "\t", row.names = FALSE)
+write.table(x.agg.1, "./aggregate_tidy.txt", sep = "\t", row.names = FALSE)
 
 
 ### end ###
